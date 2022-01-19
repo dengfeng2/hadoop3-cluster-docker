@@ -1,0 +1,36 @@
+version: "3.9"
+services:
+    hadoop01:
+        image: hadoop-base:latest
+        volumes:
+          - ./etc-hadoop:/etc-hadoop
+        networks:
+          - hadoop-net
+        hostname: hadoop01
+        tty: true
+        ports:
+          - "9870:9870"
+          - "8088:8088"
+          - "19888:19888"
+    hadoop02:
+        image: hadoop-base:latest
+        volumes:
+          - ./etc-hadoop:/etc-hadoop
+        networks:
+          - hadoop-net
+        hostname: hadoop02
+        tty: true
+        ports:
+          - "9868:9868"
+    hadoop03:
+        image: hadoop-base:latest
+        volumes:
+          - ./etc-hadoop:/etc-hadoop
+        networks:
+          - hadoop-net
+        hostname: hadoop03
+        tty: true
+
+networks:
+    hadoop-net:
+        driver: bridge
