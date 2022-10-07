@@ -21,5 +21,12 @@
         <name>dfs.namenode.secondary.http-address</name>
         <value>hdfs://hadoop02:9868</value>
     </property>
-
+    <property>
+        <name>dfs.replication</name>
+        <value>3</value>
+    </property>
+    <property>
+        <name>dfs.namenode.http-address</name>
+        <value>hadoop01:9870</value>
+    </property>
 </configuration>

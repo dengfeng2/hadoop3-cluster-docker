@@ -4,6 +4,8 @@ services:
         image: hadoop-base:latest
         volumes:
           - ./etc-hadoop:/etc-hadoop
+        environment:
+          - HADOOP_CONF_DIR=/etc-hadoop
         networks:
           - hadoop-net
         hostname: hadoop01
@@ -14,6 +16,8 @@ services:
           - "19888:19888"
     hadoop02:
         image: hadoop-base:latest
+        environment:
+          - HADOOP_CONF_DIR=/etc-hadoop
         volumes:
           - ./etc-hadoop:/etc-hadoop
         networks:
@@ -24,6 +28,8 @@ services:
           - "9868:9868"
     hadoop03:
         image: hadoop-base:latest
+        environment:
+          - HADOOP_CONF_DIR=/etc-hadoop
         volumes:
           - ./etc-hadoop:/etc-hadoop
         networks:
