@@ -1,6 +1,80 @@
 # hadoop3-cluster-docker
 
+## 新增hive
 
+容器启动后，需要检查hive和hadoop使用的guava包的版本是否一致，
+例如hadoop使用的guava的版本高于hive使用的guava版本，那么 `rm ${HIVE_HOME}/lib/guava-*.jar && cp ${HADOOP_HOME}/share/hadoop/common/lib/guava-*.jar ${HIVE_HOME}/lib/`.
+
+hive 启动
+
+配置:
+```
+# ----- hive-site.xml -----
+  <property>
+    <name>javax.jdo.option.ConnectionURL</name>
+    <value>jdbc:mysql://mysql:3306/yhy</value>
+    <description>
+      JDBC connect string for a JDBC metastore.
+      To use SSL to encrypt/authenticate the connection, provide database-specific SSL flag in the connection URL.
+      For example, jdbc:postgresql://myhost/db?ssl=true for postgres database.
+    </description>
+  </property>
+  <property>
+    <name>javax.jdo.option.ConnectionDriverName</name>
+    <value>com.mysql.cj.jdbc.Driver</value>
+    <description>Driver class name for a JDBC metastore</description>
+  </property>
+  <property>
+    <name>javax.jdo.option.ConnectionUserName</name>
+    <value>yhy</value>
+    <description>Username to use against metastore database</description>
+  </property>
+  <property>
+    <name>javax.jdo.option.ConnectionPassword</name>
+    <value>my-secret-pw</value>
+    <description>password to use against metastore database</description>
+  </property>
+
+
+# 在vi中替换变量
+:%s#${system:java.io.tmpdir}#/tmp/javaiotmp#
+:%s#${system:user.name}#root#
+
+----- hadoop core-site.xml -----
+    <property>
+        <name>hadoop.proxyuser.root.hosts</name>
+        <value>*</value>
+    </property>
+    <property>
+        <name>hadoop.proxyuser.root.groups</name>
+        <value>*</value>
+    </property>
+```
+
+初始化元数据库：`schematool -initSchema -dbType mysql`
+
+
+通过hiveserver2
+需要将hive-site.xml文件中的hive.server2.thrift.bind.host属性配置为hadoop01
+```Bash
+$ hiveserver2                     # 启动hiveserver2服务
+$ hive --service hiveserver2 &    # 后台启动hiveserver2服务
+
+                                  # 连接hiveserver2
+$ bin/beeline
+beeline> !connect jdbc:hive2://hadoop01:10000
+```
+
+通过metastore
+需要将hive-site.xml文件中的hive.metastore.uris属性配置为thrift://hadoop01:9083, 这里要注意的是，由于docker的网络名称中包含下划线，远程连接时会出现URI解析失败。不过本地连接通过/etc/hosts，URI会解析成功。
+```Bash
+$ hive --service metastore &      # 后台启动metastore服务
+
+$ bin/hive                        # 连接metastore
+
+```
+
+---
 利用docker容器模拟hadoop集群的部署。
 
 使用步骤：

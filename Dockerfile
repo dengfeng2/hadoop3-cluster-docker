@@ -26,9 +26,16 @@ ARG HADOOP_PACKAGE
 ADD ${HADOOP_PACKAGE}.tar.gz /
 RUN ln -s /${HADOOP_PACKAGE} /hadoop
 
-
 ENV HADOOP_HOME=/hadoop
 ENV PATH=$PATH:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin
 
+ARG HIVE_PACKAGE
+ADD ${HIVE_PACKAGE}.tar.gz /
+RUN ln -s /${HIVE_PACKAGE} /hive
+
+ENV HIVE_HOME=/hive
+ENV PATH=$PATH:${HIVE_HOME}/bin
+
+COPY mysql-connector-java-8.0.28.jar ${HIVE_HOME}/lib/
 
 CMD ["sh", "-c", "/usr/sbin/sshd; bash"]

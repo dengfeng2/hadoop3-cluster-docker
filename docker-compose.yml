@@ -4,8 +4,10 @@ services:
         image: hadoop-base:latest
         volumes:
           - ./etc-hadoop:/etc-hadoop
+          - ./conf-hive:/conf-hive
         environment:
           - HADOOP_CONF_DIR=/etc-hadoop
+          - HIVE_CONF_DIR=/conf-hive
         networks:
           - hadoop-net
         hostname: hadoop01
@@ -18,8 +20,10 @@ services:
         image: hadoop-base:latest
         environment:
           - HADOOP_CONF_DIR=/etc-hadoop
+          - HIVE_CONF_DIR=/conf-hive
         volumes:
           - ./etc-hadoop:/etc-hadoop
+          - ./conf-hive:/conf-hive
         networks:
           - hadoop-net
         hostname: hadoop02
@@ -30,13 +34,25 @@ services:
         image: hadoop-base:latest
         environment:
           - HADOOP_CONF_DIR=/etc-hadoop
+          - HIVE_CONF_DIR=/conf-hive
         volumes:
           - ./etc-hadoop:/etc-hadoop
+          - ./conf-hive:/conf-hive
         networks:
           - hadoop-net
         hostname: hadoop03
         tty: true
-
+    mysql:
+        image: mysql:8.0.28
+        networks:
+          - hadoop-net
+        hostname: mysql
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: my-secret-pw
+            MYSQL_DATABASE: yhy
+            MYSQL_USER: yhy
+            MYSQL_PASSWORD: my-secret-pw
 networks:
     hadoop-net:
         driver: bridge
